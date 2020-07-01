@@ -1,10 +1,17 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'com.google.gms.google-services'
+apply plugin: "androidx.navigation.safeargs.kotlin"
 
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
+
+    buildFeatures {
+//        dataBinding = true
+        viewBinding = true
+    }
 
     defaultConfig {
         applicationId "com.fhanjacson.swamb_client_android"
@@ -43,8 +50,21 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.3.0'
     implementation 'androidx.navigation:navigation-ui-ktx:2.3.0'
+
+//    Additional Libraries
+    implementation 'com.google.firebase:firebase-auth:19.3.1'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
+    implementation 'com.google.firebase:firebase-analytics:17.4.3'
+    implementation 'com.google.firebase:firebase-messaging:20.2.1'
+    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'androidx.biometric:biometric:1.0.1'
+//    implementation 'com.github.kittinunf.fuel:fuel:2.2.2'
+    implementation 'com.github.kittinunf.fuel:fuel-android:2.2.2'
+
+//    TestImplementations
+    implementation 'com.google.firebase:firebase-firestore:21.4.3'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-
 }

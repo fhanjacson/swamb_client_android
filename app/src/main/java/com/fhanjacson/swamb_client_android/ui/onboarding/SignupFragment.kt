@@ -1,23 +1,24 @@
-package com.fhanjacson.swamb_client_android.ui.notifications
+package com.fhanjacson.swamb_client_android.ui.onboarding
 
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.fhanjacson.swamb_client_android.base.BaseFragment
-import com.fhanjacson.swamb_client_android.databinding.FragmentNotificationsBinding
+import com.fhanjacson.swamb_client_android.databinding.FragmentSignupBinding
 
-class NotificationsFragment : BaseFragment() {
 
-    private var _binding: FragmentNotificationsBinding? = null
+class SignupFragment : BaseFragment() {
+
+    private var _binding: FragmentSignupBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentNotificationsBinding.inflate(inflater, container, false)
+        _binding = FragmentSignupBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -34,4 +35,5 @@ class NotificationsFragment : BaseFragment() {
     private fun setupUI() {
 
     }
+
 }
