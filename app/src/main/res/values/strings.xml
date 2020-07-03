@@ -11,5 +11,7 @@
     <string name="authentication_notification_channel_id">AUTH_NOTIFICATION_ID</string>
     <string name="authentication_notification_channel_name">AUTH_NOTIFICATION_NAME</string>
     <string name="authentication_notification_channel_description">AUTH_NOTIFICATION_DESCRIPTION</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

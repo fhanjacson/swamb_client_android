@@ -11,7 +11,7 @@ import com.fhanjacson.swamb_client_android.base.BaseActivity
 import com.fhanjacson.swamb_client_android.databinding.ActivityAuthenticateBinding
 import java.util.concurrent.Executor
 
-class AuthenticateActivity : BaseActivity() {
+class BiometricAuthenticationActivity : BaseActivity() {
 
     private lateinit var binding: ActivityAuthenticateBinding
     private lateinit var executor: Executor
@@ -36,13 +36,13 @@ class AuthenticateActivity : BaseActivity() {
         val biometricManager = BiometricManager.from(this)
         when (biometricManager.canAuthenticate()) {
             BiometricManager.BIOMETRIC_SUCCESS ->
-                logd("App can authenticate using biometrics.")
+                toast("App can authenticate using biometrics.")
             BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE ->
-                logd("No biometric features available on this device.")
+                toast("No biometric features available on this device.")
             BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE ->
-                logd("Biometric features are currently unavailable.")
+                toast("Biometric features are currently unavailable.")
             BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED ->
-                logd("The user hasn't associated any biometric credentials with their account.")
+                toast("The user hasn't associated any biometric credentials with their account.")
         }
 
         if (biometricManager.canAuthenticate() == BiometricManager.BIOMETRIC_SUCCESS) {

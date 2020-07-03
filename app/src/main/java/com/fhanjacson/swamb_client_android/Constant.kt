@@ -5,6 +5,7 @@ import android.util.Log
 class Constant {
     companion object {
         const val LOG_TAG = "PANTEQ"
+        const val REQUEST_CODE_PERMISSIONS = 10
 
 
         fun logd(message: String) {

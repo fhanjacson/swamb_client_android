@@ -33,6 +33,10 @@ class MainActivity : BaseActivity() {
         setupUI()
     }
 
+    override fun onSupportNavigateUp(): Boolean {
+        return findNavController(R.id.nav_host_fragment).navigateUp()
+    }
+
     override fun onStart() {
         super.onStart()
         val currentUser = auth.currentUser
