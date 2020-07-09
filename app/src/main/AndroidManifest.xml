@@ -12,8 +12,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.qr_scanner.LiveBarcodeScanningActivity" />
-        <activity android:name=".ui.authentication.BiometricAuthenticationActivity" />
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
@@ -33,6 +31,9 @@
             </intent-filter>
         </service>
 
+
+        <activity android:name=".ui.qr_scanner.LiveBarcodeScanningActivity" />
+        <activity android:name=".ui.authentication.BiometricAuthenticationActivity" />
         <activity
             android:name=".ui.onboarding.OnboardingActivity"
             android:label="@string/app_name">

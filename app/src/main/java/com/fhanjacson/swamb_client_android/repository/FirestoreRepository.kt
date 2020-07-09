@@ -1,4 +1,4 @@
-package com.fhanjacson.swamb_client_android.ui.repository
+package com.fhanjacson.swamb_client_android.repository
 
 import com.fhanjacson.swamb_client_android.model.FCMToken
 import com.google.android.gms.tasks.Task
