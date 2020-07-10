@@ -31,7 +31,7 @@ class FCMService : FirebaseMessagingService() {
         logd("token length: ${refreshedToken.length}")
 
         val preferences = SharedPreferencesRepository(this)
-
+        preferences.fcmToken = refreshedToken
         if (refreshedToken.isNotEmpty()) {
             val currentUser = auth.currentUser
             if (currentUser != null) {
@@ -48,8 +48,6 @@ class FCMService : FirebaseMessagingService() {
                     })
 
                 }
-            } else {
-                preferences.fcmToken = refreshedToken
             }
         } else {
             logd("token is empty")

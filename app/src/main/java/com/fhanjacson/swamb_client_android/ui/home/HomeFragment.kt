@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.fhanjacson.swamb_client_android.base.BaseFragment
 import com.fhanjacson.swamb_client_android.databinding.FragmentHomeBinding
+import com.fhanjacson.swamb_client_android.repository.SharedPreferencesRepository
 import com.fhanjacson.swamb_client_android.ui.authentication.BiometricAuthenticationActivity
 import com.fhanjacson.swamb_client_android.ui.onboarding.OnboardingActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -17,6 +18,7 @@ class HomeFragment : BaseFragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private var auth = FirebaseAuth.getInstance()
+    private lateinit var preference: SharedPreferencesRepository
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -24,6 +26,7 @@ class HomeFragment : BaseFragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
+        preference = SharedPreferencesRepository(requireActivity())
         return binding.root
     }
 
@@ -45,6 +48,7 @@ class HomeFragment : BaseFragment() {
 
         binding.buttonSignout.setOnClickListener {
             auth.signOut()
+            preference.clearAll()
             val intent = Intent(requireActivity(), OnboardingActivity::class.java)
             startActivity(intent)
             requireActivity().finish()

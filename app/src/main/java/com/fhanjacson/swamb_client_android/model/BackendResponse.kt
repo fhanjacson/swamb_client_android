@@ -5,8 +5,7 @@ import com.google.gson.Gson
 
 data class BackendResponse  (
     val status: Int = -1,
-    val message: String = "",
-    val data: String = ""
+    val message: String = ""
 ) {
     class Deserializer : ResponseDeserializable<BackendResponse> {
         override fun deserialize(content: String): BackendResponse = Gson().fromJson(content, BackendResponse::class.java)

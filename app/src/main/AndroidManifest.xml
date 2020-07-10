@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.fhanjacson.swamb_client_android">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.fhanjacson.swamb_client_android"
+    tools:replace="android:allowBackup"
+    android:allowBackup="false"
+    android:fullBackupContent="false">
 
     <uses-feature android:name="android.hardware.camera.any" />
     <uses-permission android:name="android.permission.CAMERA" />

@@ -15,12 +15,18 @@ import androidx.navigation.fragment.findNavController
 import com.afollestad.materialdialogs.MaterialDialog
 import com.fhanjacson.swamb_client_android.Constant
 import com.fhanjacson.swamb_client_android.Constant.Companion.logd
+import com.fhanjacson.swamb_client_android.Constant.Companion.loge
 import com.fhanjacson.swamb_client_android.base.BaseFragment
 import com.fhanjacson.swamb_client_android.databinding.FragmentLiveBarcodeScanningBinding
+import com.fhanjacson.swamb_client_android.model.BackendResponse
+import com.fhanjacson.swamb_client_android.model.CreateLinkageRequest
+import com.fhanjacson.swamb_client_android.model.CreateLinkageResponse
+import com.fhanjacson.swamb_client_android.repository.BackendRepository
 import com.fondesa.kpermissions.allGranted
 import com.fondesa.kpermissions.extension.permissionsBuilder
 import com.fondesa.kpermissions.extension.send
 import com.github.kittinunf.fuel.Fuel
+import com.google.firebase.auth.FirebaseAuth
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import kotlin.math.abs
@@ -38,6 +44,10 @@ class LiveBarcodeScanningFragment : BaseFragment() {
     private var camera: Camera? = null
     private var cameraProvider: ProcessCameraProvider? = null
     private var lensFacing: Int = CameraSelector.LENS_FACING_BACK
+    private var auth = FirebaseAuth.getInstance()
+    private var bRepo = BackendRepository()
+
+
 
     private lateinit var cameraExecutor: ExecutorService
 
@@ -94,12 +104,9 @@ class LiveBarcodeScanningFragment : BaseFragment() {
                 }
             }
         }
-
     }
 
     private fun setupUI() {
-        binding.viewDimBackground.visibility = View.GONE
-        binding.progressBar.visibility = View.GONE
     }
 
     private fun updateCameraUI() {
@@ -109,7 +116,6 @@ class LiveBarcodeScanningFragment : BaseFragment() {
             } else {
                 CameraSelector.LENS_FACING_FRONT
             }
-            // Re-bind use cases to update selected camera
             bindCameraUseCase()
         }
     }
@@ -117,24 +123,15 @@ class LiveBarcodeScanningFragment : BaseFragment() {
     private fun setupCamera() {
         logd("SETUP CAMERA")
         cameraExecutor = Executors.newSingleThreadExecutor()
-
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
         cameraProviderFuture.addListener(Runnable {
-
-            // CameraProvider
             cameraProvider = cameraProviderFuture.get()
-
-            // Select lensFacing depending on the available cameras
             lensFacing = when {
                 hasBackCamera() -> CameraSelector.LENS_FACING_BACK
                 hasFrontCamera() -> CameraSelector.LENS_FACING_FRONT
                 else -> throw IllegalStateException("Back and front camera are unavailable")
             }
-
-            // Enable or disable switching between cameras
             updateCameraSwitchButton()
-
-            // Build and bind the camera use cases
             bindCameraUseCase()
         }, ContextCompat.getMainExecutor(requireContext()))
     }
@@ -142,88 +139,88 @@ class LiveBarcodeScanningFragment : BaseFragment() {
     @SuppressLint("UnsafeExperimentalUsageError")
     private fun bindCameraUseCase() {
         val metrics = DisplayMetrics().also { binding.viewFinder.display.getRealMetrics(it) }
-
         logd("Screen metrics: ${metrics.widthPixels} x ${metrics.heightPixels}")
-
 //        val screenAspectRatio = aspectRatio(metrics.widthPixels, metrics.heightPixels)
 //        logd("Preview aspect ratio: $screenAspectRatio")
-
         val rotation = binding.viewFinder.display.rotation
-
         val cameraProvider = cameraProvider ?: throw IllegalStateException("Camera initialization failed.")
-
         val cameraSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
-
         preview = Preview.Builder()
-            // We request aspect ratio but no resolution
             .setTargetAspectRatio(AspectRatio.RATIO_4_3)
-            // Set initial target rotation
             .setTargetRotation(rotation)
             .build()
-
         imageAnalyzer = ImageAnalysis.Builder()
-            // We request aspect ratio but no resolution
             .setTargetAspectRatio(AspectRatio.RATIO_4_3)
-            // Set initial target rotation, we will have to call this again if rotation changes
-            // during the lifecycle of this use case
             .setTargetRotation(rotation)
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
             .build()
             .also {
-                it.setAnalyzer(cameraExecutor, BarcodeAnalyzer { barcode ->
-                    if (barcode.isNotEmpty()) {
-                        if(barcode.startsWith("swamb:")) {
-                            binding.viewDimBackground.visibility = View.VISIBLE
-                            binding.progressBar.visibility = View.VISIBLE
+                it.setAnalyzer(cameraExecutor, BarcodeAnalyzer { qrCodeString ->
+                    val swambPrefix = "swamb:"
+                    if (qrCodeString.isNotEmpty()) {
+                        if(qrCodeString.startsWith(swambPrefix)) {
+                            val token = qrCodeString.removePrefix(swambPrefix)
+                            binding.loadingLayout.visibility = View.VISIBLE
                             cameraProvider.unbindAll()
-                            logd("Barcode Found: $barcode")
-                            toast("barcode: $barcode")
-                            addAccount(barcode)
+                            logd("Barcode Found: $qrCodeString")
+                            toast("Processing QR Code...")
+                            initLinkage(token)
                         } else {
                             toast("Not a valid SWAMB QR code")
                         }
                     }
                 })
             }
-
         cameraProvider.unbindAll()
-
         try {
-            // A variable number of use-cases can be passed here -
-            // camera provides access to CameraControl & CameraInfo
             camera = cameraProvider.bindToLifecycle(
                 this, cameraSelector, preview, imageAnalyzer
             )
-
-            // Attach the viewfinder's surface provider to preview use case
             preview.setSurfaceProvider(binding.viewFinder.createSurfaceProvider())
         } catch (exc: Exception) {
             Constant.loge("Use case binding failed \n $exc")
         }
     }
 
-    private fun addAccount(qrCode: String) {
-        Fuel.get("https://reqres.in/api/users/2?delay=3")
-            .response { request, response, result ->
-                result.fold(success = {
-                    val action = LiveBarcodeScanningFragmentDirections.actionLiveBarcodeScanningFragmentToAddAccountFragment()
-                    findNavController().navigate(action)
-
-                }, failure = {
-                    MaterialDialog(requireActivity()).show {
-                        title(text = "Fail to add account")
-                        message(text = it.localizedMessage)
-                        positiveButton {
-                            bindCameraUseCase()
-                            binding.viewDimBackground.visibility = View.GONE
-                            binding.progressBar.visibility = View.GONE
+    private fun initLinkage(token: String) {
+        val currentUser = auth.currentUser
+        if (currentUser != null) {
+            val createLinkageRequest = CreateLinkageRequest(token, currentUser.uid)
+            bRepo.createLinkage(createLinkageRequest).responseObject(CreateLinkageResponse.Deserializer()) { req, res, createLinkageResult ->
+                createLinkageResult.fold(success = { data ->
+                    if (data.linkageResult) {
+                        MaterialDialog(requireActivity()).show {
+                            title(text = "Linkage Success")
+                            message(text = data.message)
+                            positiveButton {
+                                findNavController().navigateUp()
+                            }
+                            cancelable(false)
+                            cancelOnTouchOutside(false)
                         }
-                        cancelable(false)
-                        cancelOnTouchOutside(false)
+                        binding.loadingLayout.visibility = View.GONE
+                    } else {
+                        MaterialDialog(requireActivity()).show {
+                            title(text = "Linkage Fail")
+                            message(text = data.message)
+                            positiveButton {
+                                findNavController().navigateUp()
+                            }
+                            cancelable(false)
+                            cancelOnTouchOutside(false)
+                        }
+                        binding.loadingLayout.visibility = View.GONE
+                        loge("Linkage Fail Cause Linkage already Exist")
                     }
-                })
+                }, failure = { error ->
+                    toast("Fail to Create Linkage")
+                    loge("Fail to Create Linkage")
+                    loge(error.toString())
+                    binding.loadingLayout.visibility = View.GONE
 
+                })
             }
+        }
     }
 
     override fun onDestroyView() {

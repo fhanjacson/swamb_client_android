@@ -11,6 +11,7 @@ import com.fhanjacson.swamb_client_android.Constant.Companion.loge
 import com.fhanjacson.swamb_client_android.MainActivity
 import com.fhanjacson.swamb_client_android.base.BaseActivity
 import com.fhanjacson.swamb_client_android.databinding.ActivityOnboardingBinding
+import com.fhanjacson.swamb_client_android.repository.SharedPreferencesRepository
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.iid.FirebaseInstanceId
@@ -21,10 +22,12 @@ class OnboardingActivity : BaseActivity() {
 
     private lateinit var binding: ActivityOnboardingBinding
     private var auth = FirebaseAuth.getInstance()
+    private lateinit var preference: SharedPreferencesRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityOnboardingBinding.inflate(layoutInflater)
+        preference = SharedPreferencesRepository(this)
         val view = binding.root
         setContentView(view)
         setupData()
@@ -36,6 +39,8 @@ class OnboardingActivity : BaseActivity() {
 
         if (auth.currentUser?.uid != null) {
             proceedToMainActivity()
+        } else {
+            preference.clearAll()
         }
     }
 

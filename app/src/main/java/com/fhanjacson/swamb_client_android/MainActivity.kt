@@ -22,6 +22,7 @@ import com.fhanjacson.swamb_client_android.repository.SharedPreferencesRepositor
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.iid.FirebaseInstanceId
 import com.google.gson.Gson
 import java.security.KeyPair
 import java.security.KeyPairGenerator
@@ -35,6 +36,8 @@ class MainActivity : BaseActivity() {
     private lateinit var preference: SharedPreferencesRepository
     private lateinit var currentUser: FirebaseUser
 
+    private var debugVarForceSignout = 0
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,11 +46,12 @@ class MainActivity : BaseActivity() {
         val view = binding.root
         setContentView(view)
 
+
         if (auth.currentUser != null) {
             currentUser = auth.currentUser!!
+            setupData(currentUser)
+            setupUI(currentUser)
         }
-        setupData(currentUser)
-        setupUI(currentUser)
 
 
     }
@@ -93,6 +97,17 @@ class MainActivity : BaseActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
+
+        binding.loadingBar.setOnClickListener {
+            if (debugVarForceSignout >= 5) {
+                auth.signOut()
+                preference.clearAll()
+                toast("signout")
+                debugVarForceSignout = 0
+            } else {
+                debugVarForceSignout++
+            }
+        }
     }
 
     private fun updateUI(currentUser: FirebaseUser) {
@@ -131,33 +146,40 @@ class MainActivity : BaseActivity() {
         binding.loadingText.text = "Init Device, please wait..."
         binding.loadingLayout.visibility = View.VISIBLE
 
-        val fcmToken = preference.fcmToken
-        if (fcmToken != null && fcmToken.isNotEmpty()) {
-            val keyPair = generateKeyPair()
-            val devicePublicKey = Base64.encodeToString(keyPair.public.encoded, Base64.DEFAULT)
-            if (devicePublicKey.isNotEmpty()) {
-                val initDeviceRequest = InitDeviceRequest(
-                    userID = currentUser.uid,
-                    fcmToken = fcmToken,
-                    deviceName = "${Build.MANUFACTURER} ${Build.MODEL}",
-                    devicePublicKey = devicePublicKey
-                )
-                logd("initDevice(initDeviceRequest)")
-                bRepo.initDevice(initDeviceRequest).responseObject(BackendResponse.Deserializer()) { req, res, initDeviceResult ->
-                    initDeviceResult.fold(success = { data ->
-                        logd(Gson().toJson(data))
-                        if (data.status == 200) {
-                            preference.isDeviceInit = true
-                        }
-                    }, failure = { error ->
-                        toast("Fail to init Device")
-                        loge("Fail to init Device")
-                        loge(error.toString())
-                    })
-                    binding.loadingLayout.visibility = View.GONE
+        FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener {
+            val fcmToken = it.token
+            logd("fcmToken: $fcmToken")
+            if (fcmToken.isNotEmpty()) {
+                preference.fcmToken = fcmToken
+                val keyPair = generateKeyPair()
+                val devicePublicKey = Base64.encodeToString(keyPair.public.encoded, Base64.DEFAULT)
+                if (devicePublicKey.isNotEmpty()) {
+                    val initDeviceRequest = InitDeviceRequest(
+                        userID = currentUser.uid,
+                        fcmToken = fcmToken,
+                        deviceName = "${Build.MANUFACTURER} ${Build.MODEL}",
+                        devicePublicKey = devicePublicKey
+                    )
+                    logd("initDevice(initDeviceRequest)")
+                    bRepo.initDevice(initDeviceRequest).responseObject(BackendResponse.Deserializer()) { req, res, initDeviceResult ->
+                        initDeviceResult.fold(success = { data ->
+                            logd(Gson().toJson(data))
+                            if (data.status == 200) {
+                                preference.isDeviceInit = true
+                            }
+                        }, failure = { error ->
+                            toast("Fail to init Device")
+                            loge("Fail to init Device")
+                            loge(error.toString())
+                        })
+                        binding.loadingLayout.visibility = View.GONE
+                    }
                 }
+            } else {
+                logd("lol")
             }
         }
+
     }
 
 //    private fun saveFCMToken(currentUser: FirebaseUser) {
