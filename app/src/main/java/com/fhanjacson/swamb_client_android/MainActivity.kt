@@ -17,6 +17,7 @@ import com.fhanjacson.swamb_client_android.base.BaseActivity
 import com.fhanjacson.swamb_client_android.databinding.ActivityMainBinding
 import com.fhanjacson.swamb_client_android.model.BackendResponse
 import com.fhanjacson.swamb_client_android.model.InitDeviceRequest
+import com.fhanjacson.swamb_client_android.model.InitDeviceResponse
 import com.fhanjacson.swamb_client_android.repository.BackendRepository
 import com.fhanjacson.swamb_client_android.repository.SharedPreferencesRepository
 
@@ -161,11 +162,12 @@ class MainActivity : BaseActivity() {
                         devicePublicKey = devicePublicKey
                     )
                     logd("initDevice(initDeviceRequest)")
-                    bRepo.initDevice(initDeviceRequest).responseObject(BackendResponse.Deserializer()) { req, res, initDeviceResult ->
+                    bRepo.initDevice(initDeviceRequest).responseObject(InitDeviceResponse.Deserializer()) { req, res, initDeviceResult ->
                         initDeviceResult.fold(success = { data ->
                             logd(Gson().toJson(data))
                             if (data.status == 200) {
                                 preference.isDeviceInit = true
+                                preference.deviceID = data.deviceID
                             }
                         }, failure = { error ->
                             toast("Fail to init Device")

@@ -18,14 +18,13 @@ import com.fhanjacson.swamb_client_android.Constant.Companion.logd
 import com.fhanjacson.swamb_client_android.Constant.Companion.loge
 import com.fhanjacson.swamb_client_android.base.BaseFragment
 import com.fhanjacson.swamb_client_android.databinding.FragmentLiveBarcodeScanningBinding
-import com.fhanjacson.swamb_client_android.model.BackendResponse
 import com.fhanjacson.swamb_client_android.model.CreateLinkageRequest
 import com.fhanjacson.swamb_client_android.model.CreateLinkageResponse
 import com.fhanjacson.swamb_client_android.repository.BackendRepository
+import com.fhanjacson.swamb_client_android.repository.SharedPreferencesRepository
 import com.fondesa.kpermissions.allGranted
 import com.fondesa.kpermissions.extension.permissionsBuilder
 import com.fondesa.kpermissions.extension.send
-import com.github.kittinunf.fuel.Fuel
 import com.google.firebase.auth.FirebaseAuth
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -46,7 +45,7 @@ class LiveBarcodeScanningFragment : BaseFragment() {
     private var lensFacing: Int = CameraSelector.LENS_FACING_BACK
     private var auth = FirebaseAuth.getInstance()
     private var bRepo = BackendRepository()
-
+    private lateinit var preference: SharedPreferencesRepository
 
 
     private lateinit var cameraExecutor: ExecutorService
@@ -61,6 +60,7 @@ class LiveBarcodeScanningFragment : BaseFragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentLiveBarcodeScanningBinding.inflate(inflater, container, false)
+        preference = SharedPreferencesRepository(requireActivity())
         return binding.root
     }
 
@@ -185,40 +185,43 @@ class LiveBarcodeScanningFragment : BaseFragment() {
     private fun initLinkage(token: String) {
         val currentUser = auth.currentUser
         if (currentUser != null) {
-            val createLinkageRequest = CreateLinkageRequest(token, currentUser.uid)
-            bRepo.createLinkage(createLinkageRequest).responseObject(CreateLinkageResponse.Deserializer()) { req, res, createLinkageResult ->
-                createLinkageResult.fold(success = { data ->
-                    if (data.linkageResult) {
-                        MaterialDialog(requireActivity()).show {
-                            title(text = "Linkage Success")
-                            message(text = data.message)
-                            positiveButton {
-                                findNavController().navigateUp()
+            val deviceID = preference.deviceID
+            if (deviceID != null && deviceID > -1) {
+                val createLinkageRequest = CreateLinkageRequest(token, currentUser.uid, deviceID)
+                bRepo.createLinkage(createLinkageRequest).responseObject(CreateLinkageResponse.Deserializer()) { req, res, createLinkageResult ->
+                    createLinkageResult.fold(success = { data ->
+                        if (data.linkageResult) {
+                            MaterialDialog(requireActivity()).show {
+                                title(text = "Linkage Success")
+                                message(text = data.message)
+                                positiveButton {
+                                    findNavController().navigateUp()
+                                }
+                                cancelable(false)
+                                cancelOnTouchOutside(false)
                             }
-                            cancelable(false)
-                            cancelOnTouchOutside(false)
-                        }
-                        binding.loadingLayout.visibility = View.GONE
-                    } else {
-                        MaterialDialog(requireActivity()).show {
-                            title(text = "Linkage Fail")
-                            message(text = data.message)
-                            positiveButton {
-                                findNavController().navigateUp()
+                            binding.loadingLayout.visibility = View.GONE
+                        } else {
+                            MaterialDialog(requireActivity()).show {
+                                title(text = "Linkage Fail")
+                                message(text = data.message)
+                                positiveButton {
+                                    findNavController().navigateUp()
+                                }
+                                cancelable(false)
+                                cancelOnTouchOutside(false)
                             }
-                            cancelable(false)
-                            cancelOnTouchOutside(false)
+                            binding.loadingLayout.visibility = View.GONE
+                            loge("Linkage Fail Cause Linkage already Exist")
                         }
+                    }, failure = { error ->
+                        toast("Fail to Create Linkage")
+                        loge("Fail to Create Linkage")
+                        loge(error.toString())
                         binding.loadingLayout.visibility = View.GONE
-                        loge("Linkage Fail Cause Linkage already Exist")
-                    }
-                }, failure = { error ->
-                    toast("Fail to Create Linkage")
-                    loge("Fail to Create Linkage")
-                    loge(error.toString())
-                    binding.loadingLayout.visibility = View.GONE
 
-                })
+                    })
+                }
             }
         }
     }
