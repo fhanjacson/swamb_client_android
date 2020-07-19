@@ -7,4 +7,12 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="AppMaterialTheme" parent="Theme.MaterialComponents.DayNight">
+        <item name="toolbarStyle">@style/my_Toolbar</item>
+    </style>
+
+    <style name="my_Toolbar" parent="@style/Widget.MaterialComponents.Toolbar">
+        <item name="titleTextColor">@color/WHITE</item>
+    </style>
+
 </resources>

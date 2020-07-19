@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">SWAMB Client</string>
     <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
+    <string name="title_linkage">Linkage</string>
     <string name="title_notifications">Notifications</string>
 
     <string name="default_notification_channel_id">DEFAULT_NOTIFICATION_ID</string>
@@ -9,9 +9,7 @@
     <string name="default_notification_channel_description">DEFAULT_NOTIFICATION_DESCRIPTION</string>
 
     <string name="authentication_notification_channel_id">AUTH_NOTIFICATION_ID</string>
-    <string name="authentication_notification_channel_name">AUTH_NOTIFICATION_NAME</string>
-    <string name="authentication_notification_channel_description">AUTH_NOTIFICATION_DESCRIPTION</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="authentication_notification_channel_name">SWAMB Authentication Notification</string>
+    <string name="authentication_notification_channel_description">Notification channel for SWAMB Authentication</string>
 
 </resources>

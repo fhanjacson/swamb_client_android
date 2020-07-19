@@ -20,10 +20,10 @@
     </fragment>
 
     <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="com.fhanjacson.swamb_client_android.ui.dashboard.DashboardFragment"
-        android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        android:id="@+id/navigation_linkage"
+        android:name="com.fhanjacson.swamb_client_android.ui.linkage.LinkageFragment"
+        android:label="@string/title_linkage"
+        tools:layout="@layout/fragment_linkage" />
 
     <fragment
         android:id="@+id/navigation_notifications"

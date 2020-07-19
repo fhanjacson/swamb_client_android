@@ -1,20 +1,16 @@
-package com.fhanjacson.swamb_client_android.ui.dashboard
+package com.fhanjacson.swamb_client_android.ui.linkage
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.lifecycle.Observer
-import com.fhanjacson.swamb_client_android.R
 import com.fhanjacson.swamb_client_android.base.BaseFragment
-import com.fhanjacson.swamb_client_android.databinding.FragmentDashboardBinding
-import com.fhanjacson.swamb_client_android.databinding.FragmentHomeBinding
+import com.fhanjacson.swamb_client_android.databinding.FragmentLinkageBinding
 
-class DashboardFragment : BaseFragment() {
+class LinkageFragment : BaseFragment() {
 
-    private lateinit var dashboardViewModel: DashboardViewModel
-    private var _binding: FragmentDashboardBinding? = null
+    private lateinit var linkageViewModel: LinkageViewModel
+    private var _binding: FragmentLinkageBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -22,7 +18,7 @@ class DashboardFragment : BaseFragment() {
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentDashboardBinding.inflate(inflater, container, false)
+        _binding = FragmentLinkageBinding.inflate(inflater, container, false)
         return binding.root
     }
 

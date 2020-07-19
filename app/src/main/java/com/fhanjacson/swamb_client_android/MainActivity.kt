@@ -1,5 +1,9 @@
 package com.fhanjacson.swamb_client_android
 
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.security.keystore.KeyGenParameterSpec
@@ -15,16 +19,21 @@ import com.fhanjacson.swamb_client_android.Constant.Companion.logd
 import com.fhanjacson.swamb_client_android.Constant.Companion.loge
 import com.fhanjacson.swamb_client_android.base.BaseActivity
 import com.fhanjacson.swamb_client_android.databinding.ActivityMainBinding
+import com.fhanjacson.swamb_client_android.model.AuthenticationData
 import com.fhanjacson.swamb_client_android.model.BackendResponse
 import com.fhanjacson.swamb_client_android.model.InitDeviceRequest
 import com.fhanjacson.swamb_client_android.model.InitDeviceResponse
 import com.fhanjacson.swamb_client_android.repository.BackendRepository
 import com.fhanjacson.swamb_client_android.repository.SharedPreferencesRepository
+import com.fhanjacson.swamb_client_android.ui.authentication.BiometricAuthenticationActivity
+import com.fhanjacson.swamb_client_android.ui.onboarding.OnboardingActivity
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.gson.Gson
+import io.karn.notify.Notify
+import io.karn.notify.internal.utils.Action
 import java.security.KeyPair
 import java.security.KeyPairGenerator
 
@@ -52,6 +61,47 @@ class MainActivity : BaseActivity() {
             currentUser = auth.currentUser!!
             setupData(currentUser)
             setupUI(currentUser)
+
+            if (intent != null && intent.action != null) {
+                processIntent(intent)
+            }
+        } else {
+            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.cancelAll()
+            auth.signOut()
+            preference.clearAll()
+            val intent = Intent(this, OnboardingActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+
+        logd("MainActivity.Intent.action: ${intent.action}")
+        logd("MainActivity.Intent.extras.INTENT_PARAM_AUTH_DATA: ${Gson().toJson(intent.getSerializableExtra(Constant.INTENT_PARAM_AUTH_DATA))}")
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+
+        logd("MainActivity.onNewIntent.Intent.action: ${intent?.action}")
+        logd("MainActivity.onNewIntent.Intent.extras.INTENT_PARAM_AUTH_DATA: ${Gson().toJson(intent?.getSerializableExtra(Constant.INTENT_PARAM_AUTH_DATA))}")
+
+        if (intent != null && intent.action != null) {
+            processIntent(intent)
+        }
+    }
+
+    private fun processIntent(intent: Intent) {
+        when (intent.action) {
+            Constant.INTENT_ACTION_AUTH -> {
+                val openAuthActivity = Intent(this, BiometricAuthenticationActivity::class.java).apply {
+                    val authData = intent.getSerializableExtra(Constant.INTENT_PARAM_AUTH_DATA) as AuthenticationData
+                    putExtra(Constant.INTENT_PARAM_AUTH_DATA, authData)
+                    flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+                }
+                intent.removeExtra(Constant.INTENT_PARAM_AUTH_DATA)
+                startActivity(openAuthActivity)
+
+            }
         }
 
 
@@ -91,7 +141,7 @@ class MainActivity : BaseActivity() {
         val appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.navigation_home,
-                R.id.navigation_dashboard,
+                R.id.navigation_linkage,
                 R.id.navigation_notifications
             )
         )
@@ -165,9 +215,12 @@ class MainActivity : BaseActivity() {
                     bRepo.initDevice(initDeviceRequest).responseObject(InitDeviceResponse.Deserializer()) { req, res, initDeviceResult ->
                         initDeviceResult.fold(success = { data ->
                             logd(Gson().toJson(data))
-                            if (data.status == 200) {
+                            if (data.success) {
                                 preference.isDeviceInit = true
                                 preference.deviceID = data.deviceID
+                                logd("Success to init Device")
+                            } else {
+                                loge("Fail to init Device")
                             }
                         }, failure = { error ->
                             toast("Fail to init Device")

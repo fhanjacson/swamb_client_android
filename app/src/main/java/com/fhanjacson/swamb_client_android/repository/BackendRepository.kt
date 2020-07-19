@@ -1,9 +1,6 @@
 package com.fhanjacson.swamb_client_android.repository
 
-import com.fhanjacson.swamb_client_android.model.CreateLinkageRequest
-import com.fhanjacson.swamb_client_android.model.InitDeviceRequest
-import com.fhanjacson.swamb_client_android.model.RegisterUserRequest
-import com.fhanjacson.swamb_client_android.model.UpdateFCMTokenRequest
+import com.fhanjacson.swamb_client_android.model.*
 import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.core.Request
 import com.github.kittinunf.fuel.core.extensions.jsonBody
@@ -43,4 +40,12 @@ class BackendRepository {
             .jsonBody("{\"userID\": \"$userID\"}")
     }
 
+    fun validateAuthentication(validateAuthenticationRequest: ValidateAuthenticationRequest): Request {
+        return Fuel.post("$baseURL/swamb/validateAuthentication")
+            .jsonBody(Gson().toJson(validateAuthenticationRequest))
+    }
+
+    fun getAllLinkage(userID: String): Request {
+        return Fuel.get("$baseURL/users/linkage?userID=$userID")
+    }
 }

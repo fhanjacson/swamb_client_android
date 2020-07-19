@@ -2,20 +2,15 @@ package com.fhanjacson.swamb_client_android.ui.onboarding
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.fhanjacson.swamb_client_android.Constant.Companion.logd
-import com.fhanjacson.swamb_client_android.Constant.Companion.loge
 import com.fhanjacson.swamb_client_android.MainActivity
 import com.fhanjacson.swamb_client_android.base.BaseActivity
 import com.fhanjacson.swamb_client_android.databinding.ActivityOnboardingBinding
 import com.fhanjacson.swamb_client_android.repository.SharedPreferencesRepository
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.iid.FirebaseInstanceId
-import java.util.HashMap
 
 
 class OnboardingActivity : BaseActivity() {
