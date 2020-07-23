@@ -6,5 +6,7 @@ data class AuthenticationData (
     var randomString: String = "",
     var linkageID: String = "",
     var vendorName: String = "",
-    var vendorUserID: String = ""
+    var vendorUserID: String = "",
+    var iat: String = "",
+    var exp: String = ""
 ): Serializable

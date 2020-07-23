@@ -25,6 +25,7 @@ import java.nio.charset.Charset
 import java.security.KeyPair
 import java.security.KeyStore
 import java.security.Signature
+import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.Executor
 import javax.crypto.Cipher
@@ -95,8 +96,25 @@ class BiometricAuthenticationActivity : BaseActivity() {
                 val authData: AuthenticationData = authDataNullable
                 logd("authData: ${Gson().toJson(authData)}")
 
-                binding.textView1.text = "randomString: ${authData.randomString}"
-                binding.buttonSign.setOnClickListener {
+                val simpleDateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm:ss")
+
+                try {
+                    val iatLong = authData.iat.toLong()
+                    val expLong = authData.exp.toLong()
+
+                    val iatDate = Date(iatLong)
+                    val expDate = Date(expLong)
+
+                    binding.authIat.text = "Authentication Requested at: ${simpleDateFormat.format(iatDate)}"
+                    binding.authExp.text = "Authentication Expires at: ${simpleDateFormat.format(expDate)}"
+                } catch (e: Exception) {
+                    loge(e.message.toString())
+                }
+
+                binding.vendorName.text = authData.vendorName
+                binding.vendorUserID.text = authData.vendorUserID
+
+                binding.fingerprintButton.setOnClickListener {
                     signAction(authData)
                 }
             } else {

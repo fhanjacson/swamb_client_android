@@ -23,17 +23,32 @@
         android:id="@+id/navigation_linkage"
         android:name="com.fhanjacson.swamb_client_android.ui.linkage.LinkageFragment"
         android:label="@string/title_linkage"
-        tools:layout="@layout/fragment_linkage" />
+        tools:layout="@layout/fragment_linkage" >
+        <action
+            android:id="@+id/action_navigation_linkage_to_linkageDetailFragment"
+            app:destination="@id/linkageDetailFragment"
+            app:enterAnim="@anim/fragment_open_enter"
+            app:exitAnim="@anim/fragment_open_exit"
+            app:popEnterAnim="@anim/fragment_close_enter"
+            app:popExitAnim="@anim/fragment_close_exit" />
+        <action
+            android:id="@+id/action_navigation_linkage_to_liveBarcodeScanningFragment"
+            app:destination="@id/liveBarcodeScanningFragment"
+            app:enterAnim="@anim/fragment_open_enter"
+            app:exitAnim="@anim/fragment_open_exit"
+            app:popEnterAnim="@anim/fragment_close_enter"
+            app:popExitAnim="@anim/fragment_close_exit" />
+    </fragment>
 
     <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="com.fhanjacson.swamb_client_android.ui.notifications.NotificationsFragment"
-        android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_notifications" />
+        android:id="@+id/navigation_setting"
+        android:name="com.fhanjacson.swamb_client_android.ui.setting.SettingFragment"
+        android:label="@string/title_setting"
+        tools:layout="@layout/fragment_setting" />
     <fragment
         android:id="@+id/liveBarcodeScanningFragment"
         android:name="com.fhanjacson.swamb_client_android.ui.qr_scanner.LiveBarcodeScanningFragment"
-        android:label="fragment_live_barcode_scanning"
+        android:label="@string/title_barcode_scanner"
         tools:layout="@layout/fragment_live_barcode_scanning" >
         <action
             android:id="@+id/action_liveBarcodeScanningFragment_to_addAccountFragment"
@@ -47,6 +62,15 @@
     <fragment
         android:id="@+id/addAccountFragment"
         android:name="com.fhanjacson.swamb_client_android.ui.addAccount.AddAccountFragment"
-        android:label="fragment_add_account"
+        android:label="@string/title_add_linkage"
         tools:layout="@layout/fragment_add_account" />
+    <fragment
+        android:id="@+id/linkageDetailFragment"
+        android:name="com.fhanjacson.swamb_client_android.ui.linkage.LinkageDetailFragment"
+        android:label="@string/title_linkage_detail"
+        tools:layout="@layout/fragment_linkage_detail" >
+        <argument
+            android:name="linkageData"
+            app:argType="com.fhanjacson.swamb_client_android.model.LinkageData" />
+    </fragment>
 </navigation>

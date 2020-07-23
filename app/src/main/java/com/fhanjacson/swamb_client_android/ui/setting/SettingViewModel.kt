@@ -1,10 +1,10 @@
-package com.fhanjacson.swamb_client_android.ui.notifications
+package com.fhanjacson.swamb_client_android.ui.setting
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class NotificationsViewModel : ViewModel() {
+class SettingViewModel : ViewModel() {
 
     private val _text = MutableLiveData<String>().apply {
         value = "This is notifications Fragment"

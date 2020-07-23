@@ -1,7 +1,6 @@
 package com.fhanjacson.swamb_client_android
 
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -20,7 +19,6 @@ import com.fhanjacson.swamb_client_android.Constant.Companion.loge
 import com.fhanjacson.swamb_client_android.base.BaseActivity
 import com.fhanjacson.swamb_client_android.databinding.ActivityMainBinding
 import com.fhanjacson.swamb_client_android.model.AuthenticationData
-import com.fhanjacson.swamb_client_android.model.BackendResponse
 import com.fhanjacson.swamb_client_android.model.InitDeviceRequest
 import com.fhanjacson.swamb_client_android.model.InitDeviceResponse
 import com.fhanjacson.swamb_client_android.repository.BackendRepository
@@ -32,8 +30,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.gson.Gson
-import io.karn.notify.Notify
-import io.karn.notify.internal.utils.Action
 import java.security.KeyPair
 import java.security.KeyPairGenerator
 
@@ -55,7 +51,6 @@ class MainActivity : BaseActivity() {
         preference = SharedPreferencesRepository(this)
         val view = binding.root
         setContentView(view)
-
 
         if (auth.currentUser != null) {
             currentUser = auth.currentUser!!
@@ -142,7 +137,7 @@ class MainActivity : BaseActivity() {
             setOf(
                 R.id.navigation_home,
                 R.id.navigation_linkage,
-                R.id.navigation_notifications
+                R.id.navigation_setting
             )
         )
         setupActionBarWithNavController(navController, appBarConfiguration)

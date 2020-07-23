@@ -17,8 +17,8 @@ class HomeFragment : BaseFragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-    private var auth = FirebaseAuth.getInstance()
-    private lateinit var preference: SharedPreferencesRepository
+//    private var auth = FirebaseAuth.getInstance()
+//    private lateinit var preference: SharedPreferencesRepository
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -26,7 +26,7 @@ class HomeFragment : BaseFragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
-        preference = SharedPreferencesRepository(requireActivity())
+//        preference = SharedPreferencesRepository(requireActivity())
         return binding.root
     }
 
@@ -41,24 +41,7 @@ class HomeFragment : BaseFragment() {
     }
 
     private fun setupUI() {
-        binding.buttonBiometricAuthentication.setOnClickListener {
-            val intent = Intent(requireActivity(), BiometricAuthenticationActivity::class.java)
-            startActivity(intent)
-        }
 
-        binding.buttonSignout.setOnClickListener {
-            auth.signOut()
-            preference.clearAll()
-            val intent = Intent(requireActivity(), OnboardingActivity::class.java)
-            startActivity(intent)
-            requireActivity().finish()
-        }
 
-        binding.buttonLiveBarcodeScanning.setOnClickListener {
-//            val intent = Intent(requireActivity(), LiveBarcodeScanningActivity::class.java)
-//            startActivity(intent)
-            val action = HomeFragmentDirections.actionNavigationHomeToLiveBarcodeScanningFragment()
-            findNavController().navigate(action)
-        }
     }
 }

@@ -32,6 +32,7 @@ class FCMService : FirebaseMessagingService() {
         if (message.data.isNotEmpty()) {
 //            logd("Message data payload: ${message.data}")
             if (message.data["notifType"] == Constant.SWAMB_AUTH_TYPE) {
+                logd("FCM Data:\n${Gson().toJson(message.data.toString())}")
                 val authData = Gson().fromJson(message.data.toString(), AuthenticationData::class.java)
 
 //                val intent = Intent(this, BiometricAuthenticationActivity::class.java)
@@ -94,15 +95,15 @@ class FCMService : FirebaseMessagingService() {
 //                clearIntent = cancel/deny auth
 
             }
-            .actions {
-                add(
-                    Action(
-                        R.drawable.ic_app_icon,
-                        "ACTION1",
-                        null
-                    )
-                )
-            }
+//            .actions {
+//                add(
+//                    Action(
+//                        R.drawable.ic_app_icon,
+//                        "ACTION1",
+//                        null
+//                    )
+//                )
+//            }
             .show(notificationID)
     }
 

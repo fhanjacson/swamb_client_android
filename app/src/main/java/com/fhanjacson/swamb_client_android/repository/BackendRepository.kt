@@ -12,23 +12,19 @@ class BackendRepository {
 //    private val baseURL = "https://211478a4719e.ngrok.io"
 
     fun registerUser(registerUserRequest: RegisterUserRequest): Request {
-        return Fuel.post("$baseURL/users")
-            .jsonBody(Gson().toJson(registerUserRequest))
+        return Fuel.post("$baseURL/users").jsonBody(Gson().toJson(registerUserRequest))
     }
 
     fun initDevice(initDeviceRequest: InitDeviceRequest): Request {
-        return Fuel.post("$baseURL/users/initDevice")
-            .jsonBody(Gson().toJson(initDeviceRequest))
+        return Fuel.post("$baseURL/users/initDevice").jsonBody(Gson().toJson(initDeviceRequest))
     }
 
     fun updateFCMToken(updateFCMTokenRequest: UpdateFCMTokenRequest): Request {
-        return Fuel.post("$baseURL/users/updateFCMToken")
-            .jsonBody(Gson().toJson(updateFCMTokenRequest))
+        return Fuel.post("$baseURL/users/updateFCMToken").jsonBody(Gson().toJson(updateFCMTokenRequest))
     }
 
     fun createLinkage(createLinkageRequest: CreateLinkageRequest): Request {
-        return Fuel.post("$baseURL/swamb/linkage")
-            .jsonBody(Gson().toJson(createLinkageRequest))
+        return Fuel.post("$baseURL/swamb/linkage").jsonBody(Gson().toJson(createLinkageRequest))
     }
 
     fun canLogin(userID: String): Request {
@@ -36,16 +32,23 @@ class BackendRepository {
     }
 
     fun invalidateAllDevice(userID: String): Request {
-        return Fuel.post("$baseURL/users/invalidateAllDevice")
-            .jsonBody("{\"userID\": \"$userID\"}")
+        return Fuel.post("$baseURL/users/invalidateAllDevice").jsonBody("{\"userID\": \"$userID\"}")
     }
 
     fun validateAuthentication(validateAuthenticationRequest: ValidateAuthenticationRequest): Request {
-        return Fuel.post("$baseURL/swamb/validateAuthentication")
-            .jsonBody(Gson().toJson(validateAuthenticationRequest))
+        return Fuel.post("$baseURL/swamb/validateAuthentication").jsonBody(Gson().toJson(validateAuthenticationRequest))
     }
 
     fun getAllLinkage(userID: String): Request {
         return Fuel.get("$baseURL/users/linkage?userID=$userID")
     }
+
+    fun updateLinkageNickname(updateLinkageNicknameRequest: UpdateLinkageNicknameRequest): Request {
+        return Fuel.put("$baseURL/users/linkage").jsonBody(Gson().toJson(updateLinkageNicknameRequest))
+    }
+
+    fun deleteLinkage(deleteLinkageRequest: DeleteLinkageRequest): Request {
+        return Fuel.delete("$baseURL/users/linkage").jsonBody(Gson().toJson(deleteLinkageRequest))
+    }
+
 }

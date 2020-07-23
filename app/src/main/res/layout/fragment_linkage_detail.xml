@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.linkage.LinkageDetailFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:src="@tools:sample/avatars" />
+
+            <TextView
+                android:id="@+id/vendorName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Famazon.com" />
+
+            <TextView
+                android:id="@+id/vendorUserID"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="fhan.jacson@gmail.com" />
+
+            <Button
+                android:id="@+id/button_edit_linkage_nickname"
+                style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="edit linkage nickname"
+                app:icon="@drawable/ic_edit_black_24dp" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerview_linkage_history"
+                android:layout_width="match_parent"
+                android:layout_height="400dp" />
+
+            <Button
+                android:id="@+id/button_delete_linkage"
+                style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="delete linkage"
+                app:icon="@drawable/ic_delete_black_24dp" />
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
