@@ -96,7 +96,6 @@ class BiometricAuthenticationActivity : BaseActivity() {
                 val authData: AuthenticationData = authDataNullable
                 logd("authData: ${Gson().toJson(authData)}")
 
-                val simpleDateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm:ss")
 
                 try {
                     val iatLong = authData.iat.toLong()
@@ -105,8 +104,8 @@ class BiometricAuthenticationActivity : BaseActivity() {
                     val iatDate = Date(iatLong)
                     val expDate = Date(expLong)
 
-                    binding.authIat.text = "Authentication Requested at: ${simpleDateFormat.format(iatDate)}"
-                    binding.authExp.text = "Authentication Expires at: ${simpleDateFormat.format(expDate)}"
+                    binding.authIat.text = "Authentication Requested at: ${Constant.SIMPLE_DATE_FORMAT.format(iatDate)}"
+                    binding.authExp.text = "Authentication Expires at: ${Constant.SIMPLE_DATE_FORMAT.format(expDate)}"
                 } catch (e: Exception) {
                     loge(e.message.toString())
                 }

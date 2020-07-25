@@ -1,10 +1,12 @@
 package com.fhanjacson.swamb_client_android
 
 import android.util.Log
+import java.text.SimpleDateFormat
 
 class Constant {
     companion object {
 
+        val SIMPLE_DATE_FORMAT = SimpleDateFormat("dd/MM/yyyy HH:mm:ss")
         const val DEFAULT_NOTIFICATION_ID: Int = 1337
         const val ANDROID_KEYSTORE: String = "AndroidKeyStore"
         const val DEVICE_KEYPAIR_ALIAS: String = "SWAMB_KEY_ALIAS"

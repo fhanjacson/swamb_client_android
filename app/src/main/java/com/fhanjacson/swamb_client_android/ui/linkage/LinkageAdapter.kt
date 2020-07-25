@@ -8,8 +8,11 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.fhanjacson.swamb_client_android.Constant
 import com.fhanjacson.swamb_client_android.R
 import com.fhanjacson.swamb_client_android.model.LinkageData
+import java.util.*
+import kotlin.collections.ArrayList
 
 class LinkageAdapter(private val linkageList: ArrayList<LinkageData>, private val fragment: Fragment, private val callback: LinkageClickListener): RecyclerView.Adapter<LinkageAdapter.LinkageViewHolder>() {
 
@@ -36,10 +39,13 @@ class LinkageAdapter(private val linkageList: ArrayList<LinkageData>, private va
         var linkageCreatedTimestampTextview = itemView.findViewById<TextView>(R.id.linkageCreatedTimestamp_text)
 
         fun bind(linkageData: LinkageData, fragment: Fragment, callback: LinkageClickListener) {
+            val lastAuthDate = Date(linkageData.lastAuthTimestamp)
+            val linkageCreatedDate = Date(linkageData.linkageCreatedTimestamp)
+
             vendorNameTextview.text = linkageData.vendorName
             vendorUserIDTextview.text = linkageData.vendorUserID
-            lastAuthTimestampTextview.text = linkageData.lastAuthTimestamp
-            linkageCreatedTimestampTextview.text = linkageData.linkageCreatedTimestamp
+            lastAuthTimestampTextview.text = Constant.SIMPLE_DATE_FORMAT.format(lastAuthDate)
+            linkageCreatedTimestampTextview.text = Constant.SIMPLE_DATE_FORMAT.format(linkageCreatedDate)
             Glide.with(fragment).load(linkageData.vendorIconUrl).centerCrop().into(vendorImageView)
 
             itemView.setOnClickListener {

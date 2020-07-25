@@ -8,6 +8,6 @@ data class LinkageData (
     var vendorName: String = "",
     var vendorUserID: String = "",
     var vendorIconUrl: String = "",
-    var linkageCreatedTimestamp: String = "",
-    var lastAuthTimestamp: String = ""
+    var linkageCreatedTimestamp: Long = 0,
+    var lastAuthTimestamp: Long = 0
 ): Serializable
