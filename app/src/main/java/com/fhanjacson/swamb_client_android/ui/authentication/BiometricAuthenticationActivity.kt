@@ -74,8 +74,6 @@ class BiometricAuthenticationActivity : BaseActivity() {
     private fun setupUI() {
         val authDataNullable = intent.getSerializableExtra(Constant.INTENT_PARAM_AUTH_DATA) as AuthenticationData?
 
-
-
         val biometricManager = BiometricManager.from(this)
         when (biometricManager.canAuthenticate()) {
             BiometricManager.BIOMETRIC_SUCCESS ->
@@ -111,6 +109,10 @@ class BiometricAuthenticationActivity : BaseActivity() {
                 binding.vendorName.text = authData.vendorName
                 binding.vendorUserID.text = authData.vendorUserID
 
+                binding.authMetadataIP.text = "IP: ${authData.ip}"
+                binding.authMetadataBrowser.text = "Browser: ${authData.browser} ${authData.version}"
+                binding.authMetadataMachine.text = "Client: ${authData.platform} ${authData.os}"
+
                 binding.buttonDenyAuth.setOnClickListener {
                     try {
                         bRepo.authFailLogger(authData.linkageID.toInt(), "CLIENT_DENY").responseString { result ->
@@ -122,9 +124,16 @@ class BiometricAuthenticationActivity : BaseActivity() {
                     }
                 }
 
-                binding.fingerprintButton.setOnClickListener {
+                signAction(authData)
+
+                binding.authenticateButton.setOnClickListener {
                     signAction(authData)
+
                 }
+
+//                binding.fingerprintButton.setOnClickListener {
+//                    signAction(authData)
+//                }
             } else {
                 MaterialDialog(this).show {
                     title(text = "ERROR")
@@ -173,7 +182,7 @@ class BiometricAuthenticationActivity : BaseActivity() {
         promptInfo = BiometricPrompt.PromptInfo.Builder()
             .setTitle("SWAMB Authentication request from ${authData.vendorName}")
             .setSubtitle("Authenticate account: ${authData.vendorUserID} on ${authData.vendorName}")
-            .setDescription("By confirming your fingerprint, you are allowing an authenticate request from ${authData.vendorName}")
+            .setDescription("By confirming your fingerprint, you are accepting a SWAMB Auth request from ${authData.vendorName}")
             .setNegativeButtonText("Deny Authentication")
             .build()
 
@@ -194,7 +203,8 @@ class BiometricAuthenticationActivity : BaseActivity() {
 
         try {
             val linkageID = authData.linkageID.toInt()
-            val validateAuthenticationRequest = ValidateAuthenticationRequest(signedString, linkageID)
+            val authLogID = authData.authLogID.toInt()
+            val validateAuthenticationRequest = ValidateAuthenticationRequest(signedString, linkageID, authLogID)
 
             bRepo.validateAuthentication(validateAuthenticationRequest)
                 .responseObject(BackendResponse.Deserializer()) { req, res, validateAuthenticationResult ->
