@@ -9,6 +9,7 @@ import androidx.navigation.fragment.findNavController
 import com.afollestad.materialdialogs.MaterialDialog
 import com.fhanjacson.swamb_client_android.base.BaseFragment
 import com.fhanjacson.swamb_client_android.databinding.FragmentSettingBinding
+import com.fhanjacson.swamb_client_android.repository.BackendRepository
 import com.fhanjacson.swamb_client_android.repository.SharedPreferencesRepository
 import com.fhanjacson.swamb_client_android.ui.onboarding.OnboardingActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -19,6 +20,7 @@ class SettingFragment : BaseFragment() {
     private val binding get() = _binding!!
     private var auth = FirebaseAuth.getInstance()
     private lateinit var preference: SharedPreferencesRepository
+    private var bRepo = BackendRepository()
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -26,6 +28,7 @@ class SettingFragment : BaseFragment() {
             savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentSettingBinding.inflate(inflater, container, false)
+        preference = SharedPreferencesRepository(requireActivity())
         return binding.root
     }
 
@@ -40,6 +43,14 @@ class SettingFragment : BaseFragment() {
     }
 
     private fun setupUI() {
+
+        val currentUser = auth.currentUser
+
+        if (currentUser != null) {
+            binding.settingEmailText.text = currentUser.email
+        }
+
+
 
         binding.buttonSignout.setOnClickListener {
             MaterialDialog(requireActivity()).show {

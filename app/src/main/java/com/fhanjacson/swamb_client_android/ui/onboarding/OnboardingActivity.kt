@@ -2,9 +2,11 @@ package com.fhanjacson.swamb_client_android.ui.onboarding
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.biometric.BiometricManager
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.afollestad.materialdialogs.MaterialDialog
 import com.fhanjacson.swamb_client_android.MainActivity
 import com.fhanjacson.swamb_client_android.base.BaseActivity
 import com.fhanjacson.swamb_client_android.databinding.ActivityOnboardingBinding
@@ -32,10 +34,56 @@ class OnboardingActivity : BaseActivity() {
     override fun onStart() {
         super.onStart()
 
-        if (auth.currentUser?.uid != null) {
-            proceedToMainActivity()
-        } else {
-            preference.clearAll()
+        val biometricManager = BiometricManager.from(this)
+
+        when (biometricManager.canAuthenticate()) {
+            BiometricManager.BIOMETRIC_SUCCESS -> {
+                if (auth.currentUser?.uid != null) {
+                    proceedToMainActivity()
+                } else {
+                    preference.clearAll()
+                }
+            }
+
+            BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE -> {
+                MaterialDialog(this).show {
+                    title(text = "No Biometric features is supported on this device")
+                    message(text = "Biometrics features is not supported by this device, you need a device that has biometrics capability")
+                    positiveButton {
+                        finish()
+                    }
+                    cancelable(false)
+                    cancelOnTouchOutside(false)
+                }
+                toast("No biometric features available on this device.")
+            }
+
+            BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE -> {
+                MaterialDialog(this).show {
+                    title(text = "Biometric features is unavailable")
+                    message(text = "Biometrics features is currently unavailable, please try again later")
+                    positiveButton {
+                        finish()
+                    }
+                    cancelable(false)
+                    cancelOnTouchOutside(false)
+                }
+                toast("Biometric features are currently unavailable.")
+            }
+
+            BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> {
+                MaterialDialog(this).show {
+                    title(text = "No biometrics enrolled on this device")
+                    message(text = "Please enroll a biometrics before continuing")
+                    positiveButton {
+                        finish()
+                    }
+                    cancelable(false)
+                    cancelOnTouchOutside(false)
+                }
+                toast("The user hasn't associated any biometric credentials with their account.")
+            }
+
         }
     }
 
@@ -65,7 +113,8 @@ class OnboardingActivity : BaseActivity() {
     }
 
 
-    private inner class OnboardingViewPagerAdapter(context: FragmentActivity, var viewpagerItems: ArrayList<Pair<String, Fragment>>): FragmentStateAdapter(context) {
+    private inner class OnboardingViewPagerAdapter(context: FragmentActivity, var viewpagerItems: ArrayList<Pair<String, Fragment>>) :
+        FragmentStateAdapter(context) {
         override fun getItemCount(): Int {
             return viewpagerItems.size
         }

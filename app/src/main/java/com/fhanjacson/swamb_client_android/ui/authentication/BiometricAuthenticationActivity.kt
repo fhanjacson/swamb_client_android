@@ -25,12 +25,8 @@ import java.nio.charset.Charset
 import java.security.KeyPair
 import java.security.KeyStore
 import java.security.Signature
-import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.Executor
-import javax.crypto.Cipher
-import javax.crypto.KeyGenerator
-import kotlin.math.sign
 
 class BiometricAuthenticationActivity : BaseActivity() {
 
@@ -78,6 +74,8 @@ class BiometricAuthenticationActivity : BaseActivity() {
     private fun setupUI() {
         val authDataNullable = intent.getSerializableExtra(Constant.INTENT_PARAM_AUTH_DATA) as AuthenticationData?
 
+
+
         val biometricManager = BiometricManager.from(this)
         when (biometricManager.canAuthenticate()) {
             BiometricManager.BIOMETRIC_SUCCESS ->
@@ -112,6 +110,17 @@ class BiometricAuthenticationActivity : BaseActivity() {
 
                 binding.vendorName.text = authData.vendorName
                 binding.vendorUserID.text = authData.vendorUserID
+
+                binding.buttonDenyAuth.setOnClickListener {
+                    try {
+                        bRepo.authFailLogger(authData.linkageID.toInt(), "CLIENT_DENY").responseString { result ->
+                            finish()
+                        }
+                    } catch (e: Exception) {
+                        toast("authFailLogger Error")
+                        loge(e.toString())
+                    }
+                }
 
                 binding.fingerprintButton.setOnClickListener {
                     signAction(authData)

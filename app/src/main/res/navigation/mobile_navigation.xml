@@ -17,6 +17,13 @@
             app:exitAnim="@anim/fragment_open_exit"
             app:popEnterAnim="@anim/fragment_close_enter"
             app:popExitAnim="@anim/fragment_close_exit" />
+        <action
+            android:id="@+id/action_navigation_home_to_authHistoryFragment"
+            app:destination="@id/authHistoryFragment"
+            app:enterAnim="@anim/fragment_open_enter"
+            app:exitAnim="@anim/fragment_open_exit"
+            app:popEnterAnim="@anim/fragment_close_enter"
+            app:popExitAnim="@anim/fragment_close_exit" />
     </fragment>
 
     <fragment
@@ -49,21 +56,7 @@
         android:id="@+id/liveBarcodeScanningFragment"
         android:name="com.fhanjacson.swamb_client_android.ui.qr_scanner.LiveBarcodeScanningFragment"
         android:label="@string/title_barcode_scanner"
-        tools:layout="@layout/fragment_live_barcode_scanning" >
-        <action
-            android:id="@+id/action_liveBarcodeScanningFragment_to_addAccountFragment"
-            app:destination="@id/addAccountFragment"
-            app:popUpTo="@id/navigation_home"
-            app:enterAnim="@anim/fragment_open_enter"
-            app:exitAnim="@anim/fragment_open_exit"
-            app:popEnterAnim="@anim/fragment_close_enter"
-            app:popExitAnim="@anim/fragment_close_exit" />
-    </fragment>
-    <fragment
-        android:id="@+id/addAccountFragment"
-        android:name="com.fhanjacson.swamb_client_android.ui.addAccount.AddAccountFragment"
-        android:label="@string/title_add_linkage"
-        tools:layout="@layout/fragment_add_account" />
+        tools:layout="@layout/fragment_live_barcode_scanning" />
     <fragment
         android:id="@+id/linkageDetailFragment"
         android:name="com.fhanjacson.swamb_client_android.ui.linkage.LinkageDetailFragment"
@@ -73,4 +66,9 @@
             android:name="linkageData"
             app:argType="com.fhanjacson.swamb_client_android.model.LinkageData" />
     </fragment>
+    <fragment
+        android:id="@+id/authHistoryFragment"
+        android:name="com.fhanjacson.swamb_client_android.ui.authLog.AuthLogFragment"
+        android:label="@string/title_auth_history"
+        tools:layout="@layout/fragment_auth_log" />
 </navigation>

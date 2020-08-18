@@ -29,5 +29,7 @@
     <string name="attachment_title">Download incoming attachments</string>
     <string name="attachment_summary_on">Automatically download attachments for incoming emails</string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="text_password_criteria"><![CDATA[Password Criteria:\n• 8 Characters Minimum\n• 64 Characters Maximum\n• Contain at least one (1) character from four (4) of the allowed characters category \n\nAllowed characters:\n• Number [0–9]\n• Lowercase letter [a-z]\n• Uppercase letter [A-Z]\n• Special Character [!@#$%^&*()\-_=+{};:,<.>]]]></string>
+    <string name="title_auth_history">Authentication History</string>
 
 </resources>

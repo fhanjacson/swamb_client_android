@@ -32,8 +32,8 @@ class FCMService : FirebaseMessagingService() {
         if (message.data.isNotEmpty()) {
 //            logd("Message data payload: ${message.data}")
             if (message.data["notifType"] == Constant.SWAMB_AUTH_TYPE) {
-                logd("FCM Data:\n${Gson().toJson(message.data.toString())}")
-                val authData = Gson().fromJson(message.data.toString(), AuthenticationData::class.java)
+                logd("FCM Data:\n${message.data}")
+                val authData = Gson().fromJson(message.data["jsonData"].toString(), AuthenticationData::class.java)
 
 //                val intent = Intent(this, BiometricAuthenticationActivity::class.java)
 //                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK

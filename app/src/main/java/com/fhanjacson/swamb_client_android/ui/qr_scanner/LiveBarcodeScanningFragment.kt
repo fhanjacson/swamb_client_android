@@ -215,7 +215,15 @@ class LiveBarcodeScanningFragment : BaseFragment() {
                             loge("Linkage Fail Cause Linkage already Exist")
                         }
                     }, failure = { error ->
-                        toast("Fail to Create Linkage")
+                        MaterialDialog(requireActivity()).show {
+                            title(text = "Linkage Fail")
+                            message(text = "Possible problems: Expire QR Code or Network Problem")
+                            positiveButton {
+                                findNavController().navigateUp()
+                            }
+                            cancelable(false)
+                            cancelOnTouchOutside(false)
+                        }
                         loge("Fail to Create Linkage")
                         loge(error.toString())
                         binding.loadingLayout.visibility = View.GONE

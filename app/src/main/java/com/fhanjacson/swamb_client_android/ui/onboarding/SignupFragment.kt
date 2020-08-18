@@ -6,6 +6,7 @@ import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.fhanjacson.swamb_client_android.Constant
 import com.fhanjacson.swamb_client_android.Constant.Companion.loge
 import com.fhanjacson.swamb_client_android.Constant.Companion.logd
 import com.fhanjacson.swamb_client_android.MainActivity
@@ -129,6 +130,9 @@ class SignupFragment : BaseFragment() {
         if (email.isEmpty()) {
             formValid = false
             binding.signupEmailLayout.error = "Email Address must not empty"
+        } else if (email.length > 64) {
+            formValid = false
+            binding.signupEmailLayout.error = "Email must not exceed 64 characters"
         } else if (!isEmailValid(email)) {
             formValid = false
             binding.signupEmailLayout.error = "Email Address is not valid"
@@ -139,6 +143,9 @@ class SignupFragment : BaseFragment() {
         if (password.isEmpty()) {
             formValid = false
             binding.signupPasswordLayout.error = "Password must not empty"
+        } else if (password.length > 64) {
+            formValid = false
+            binding.signupPasswordLayout.error = "Password must not exceed 64 characters"
         } else if (!isPasswordValid(password)) {
             formValid = false
             binding.signupPasswordLayout.error = "Password is not valid"
@@ -156,7 +163,7 @@ class SignupFragment : BaseFragment() {
     private fun isEmailValid(email: String): Boolean = Patterns.EMAIL_ADDRESS.matcher(email).matches()
 
     private fun isPasswordValid(password: String): Boolean {
-        val passwordPattern = Pattern.compile("[a-zA-Z0-9!@#$]{8,32}")
+        val passwordPattern = Pattern.compile(Constant.REGEX_STRONG_PASSWORD)
         return passwordPattern.matcher(password).matches()
     }
 

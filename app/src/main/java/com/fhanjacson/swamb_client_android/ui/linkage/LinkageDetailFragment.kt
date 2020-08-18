@@ -2,22 +2,19 @@ package com.fhanjacson.swamb_client_android.ui.linkage
 
 import android.os.Bundle
 import android.text.InputType
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.input.input
 import com.bumptech.glide.Glide
 import com.fhanjacson.swamb_client_android.Constant
 import com.fhanjacson.swamb_client_android.base.BaseFragment
 import com.fhanjacson.swamb_client_android.databinding.FragmentLinkageDetailBinding
-import com.fhanjacson.swamb_client_android.model.BackendResponse
-import com.fhanjacson.swamb_client_android.model.DeleteLinkageRequest
-import com.fhanjacson.swamb_client_android.model.LinkageData
-import com.fhanjacson.swamb_client_android.model.UpdateLinkageNicknameRequest
+import com.fhanjacson.swamb_client_android.model.*
 import com.fhanjacson.swamb_client_android.repository.BackendRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -52,7 +49,10 @@ class LinkageDetailFragment : BaseFragment() {
     fun setupUI(linkageData: LinkageData) {
         binding.vendorName.text = linkageData.vendorName
         binding.vendorUserID.text = linkageData.vendorUserID
+        binding.linkageNickname.text = linkageData.linkageNickname
         Glide.with(this).load(linkageData.vendorIconUrl).into(binding.imageView)
+
+        getAuthenticationHistory(linkageData.linkageID)
 
         binding.buttonEditLinkageNickname.setOnClickListener {
             val inputType = InputType.TYPE_CLASS_TEXT
@@ -84,6 +84,34 @@ class LinkageDetailFragment : BaseFragment() {
             }
         }
 
+    }
+
+    private fun getAuthenticationHistory(linkageID: Int) {
+        bRepo.getAuthenticationHistory(linkageID).responseObject(AuthenticationHistoryResponse.Deserializer()) { req, res, authenticationHistoryResult ->
+            authenticationHistoryResult.fold(success = { data ->
+
+                if (data.success) {
+                    setupRecyclerview(data.results)
+                }
+
+            }, failure = { error ->
+                toast("Fail to Get Authentication History")
+                Constant.loge("Fail to Get Authentication History")
+                Constant.loge(error.toString())
+            })
+
+        }
+    }
+
+    private fun setupRecyclerview(authHistory: ArrayList<AuthenticationHistoryResponse.AuthenticationHistory>) {
+        val viewManager = LinearLayoutManager(context)
+        val viewAdapter = AuthHistoryAdapter(authHistory)
+
+        binding.recyclerviewLinkageHistory.apply {
+            setHasFixedSize(true)
+            layoutManager = viewManager
+            adapter = viewAdapter
+        }
     }
 
     private fun updateNickname(userID: String, linkageID: Int, nickname: String) {

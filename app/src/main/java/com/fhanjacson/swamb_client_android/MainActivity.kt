@@ -9,6 +9,7 @@ import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Base64
 import android.view.View
+import androidx.biometric.BiometricManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -115,8 +116,6 @@ class MainActivity : BaseActivity() {
         notifHelper = NotificationHelper(this)
         logd("Current User ID: ${currentUser.uid}")
         val isDeviceInit = preference.isDeviceInit
-        logd("isDeviceInit: $isDeviceInit")
-
         if (isDeviceInit == null) {
             preference.isDeviceInit = false
             initDevice(currentUser)
@@ -178,23 +177,21 @@ class MainActivity : BaseActivity() {
         kpg.initialize(parameterSpec)
         val keyPair = kpg.generateKeyPair()
         return keyPair
+    }
 //        logd("Public Key Length: ${Base64.encodeToString(keyPair.public.encoded, Base64.DEFAULT).length}")
 //        preference.isKeyPairGenerated = true
-    }
 
     private fun savePublicKey() {
         logd("Saving Public Key")
     }
 
     private fun initDevice(currentUser: FirebaseUser) {
-
         logd("initDevice")
         binding.loadingText.text = "Init Device, please wait..."
         binding.loadingLayout.visibility = View.VISIBLE
 
         FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener {
             val fcmToken = it.token
-            logd("fcmToken: $fcmToken")
             if (fcmToken.isNotEmpty()) {
                 preference.fcmToken = fcmToken
                 val keyPair = generateKeyPair()
@@ -206,10 +203,8 @@ class MainActivity : BaseActivity() {
                         deviceName = "${Build.MANUFACTURER} ${Build.MODEL}",
                         devicePublicKey = devicePublicKey
                     )
-                    logd("initDevice(initDeviceRequest)")
                     bRepo.initDevice(initDeviceRequest).responseObject(InitDeviceResponse.Deserializer()) { req, res, initDeviceResult ->
                         initDeviceResult.fold(success = { data ->
-                            logd(Gson().toJson(data))
                             if (data.success) {
                                 preference.isDeviceInit = true
                                 preference.deviceID = data.deviceID
@@ -226,31 +221,8 @@ class MainActivity : BaseActivity() {
                     }
                 }
             } else {
-                logd("lol")
+                loge("Public Key is empty")
             }
         }
-
     }
-
-//    private fun saveFCMToken(currentUser: FirebaseUser) {
-//        notifHelper.getFCMToken()
-//            .addOnSuccessListener { result ->
-//                val token = result.token
-//                if (token.isNotEmpty()) {
-//                    logd("Saving FCM Token to database ...")
-//                    val fcmToken = FCMToken(token = token, deviceName = "${Build.MANUFACTURER} ${Build.MODEL}")
-//                    fRepo.saveFCMToken(fcmToken).addOnSuccessListener {
-//                        logd("FCM Token saved to database")
-//                    }.addOnFailureListener {
-//                        toast("Fail to save FCM Token to database")
-//                        loge(it.toString())
-//                    }
-//                } else {
-//                    logd("token is empty")
-//                }
-//            }.addOnFailureListener {
-//                toast("failed to get InstanceID token")
-//                loge(it.toString())
-//            }
-//    }
 }

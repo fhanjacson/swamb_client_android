@@ -15,7 +15,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppMaterialTheme">
+        android:theme="@style/AppTheme">
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
@@ -36,7 +36,6 @@
         </service>
 
 
-        <activity android:name=".ui.qr_scanner.LiveBarcodeScanningActivity" />
         <activity android:name=".ui.authentication.BiometricAuthenticationActivity" />
         <activity
             android:name=".ui.onboarding.OnboardingActivity"

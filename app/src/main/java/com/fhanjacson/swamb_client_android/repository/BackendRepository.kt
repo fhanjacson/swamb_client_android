@@ -51,4 +51,20 @@ class BackendRepository {
         return Fuel.delete("$baseURL/users/linkage").jsonBody(Gson().toJson(deleteLinkageRequest))
     }
 
+    fun getAuthenticationHistory(linkageID: Int): Request {
+        return Fuel.get("$baseURL/users/authenticationHistory?linkageID=$linkageID")
+    }
+
+    fun getAuthenticationLog(userID: String): Request {
+        return Fuel.get("$baseURL/users/authenticationLog?userID=$userID")
+    }
+
+    fun authFailLogger(linkageID: Int, authMessage: String): Request {
+        return Fuel.post("$baseURL/swamb/authenticationFailLogger").jsonBody("{\"linkageID\": $linkageID, \"authMessage\": \"$authMessage\"}")
+    }
+
+    fun getUserStats(userID: String): Request {
+        return Fuel.get("$baseURL/users/userStats?userID=$userID")
+    }
+
 }

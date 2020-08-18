@@ -32,16 +32,18 @@ class LinkageAdapter(private val linkageList: ArrayList<LinkageData>, private va
 
     class LinkageViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
 
-        var vendorImageView = itemView.findViewById<ImageView>(R.id.vendorIcon_image)
-        var vendorNameTextview = itemView.findViewById<TextView>(R.id.vendorName_text)
-        var vendorUserIDTextview = itemView.findViewById<TextView>(R.id.vendorUserID_text)
-        var lastAuthTimestampTextview = itemView.findViewById<TextView>(R.id.lastAuthTimestamp_text)
-        var linkageCreatedTimestampTextview = itemView.findViewById<TextView>(R.id.linkageCreatedTimestamp_text)
+        private var linkageNicknameTextView: TextView = itemView.findViewById(R.id.linkageNickname_text)
+        private var vendorImageView: ImageView = itemView.findViewById(R.id.vendorIcon_image)
+        private var vendorNameTextview: TextView = itemView.findViewById(R.id.vendorName_text)
+        private var vendorUserIDTextview: TextView = itemView.findViewById(R.id.vendorUserID_text)
+        private var lastAuthTimestampTextview: TextView = itemView.findViewById(R.id.lastAuthTimestamp_text)
+        private var linkageCreatedTimestampTextview: TextView = itemView.findViewById(R.id.linkageCreatedTimestamp_text)
 
         fun bind(linkageData: LinkageData, fragment: Fragment, callback: LinkageClickListener) {
             val lastAuthDate = Date(linkageData.lastAuthTimestamp)
             val linkageCreatedDate = Date(linkageData.linkageCreatedTimestamp)
 
+            linkageNicknameTextView.text = linkageData.linkageNickname
             vendorNameTextview.text = linkageData.vendorName
             vendorUserIDTextview.text = linkageData.vendorUserID
             lastAuthTimestampTextview.text = Constant.SIMPLE_DATE_FORMAT.format(lastAuthDate)

@@ -117,6 +117,9 @@ class SigninFragment : BaseFragment() {
         if (email.isEmpty()) {
             formValid = false
             binding.signinEmailLayout.error = "Email must not empty"
+        } else if (email.length > 64) {
+            formValid = false
+            binding.signinEmailLayout.error = "Email must not exceed 64 characters"
         } else if (!isEmailValid(email)) {
             formValid = false
             binding.signinEmailLayout.error = "Email is not valid"
@@ -127,6 +130,9 @@ class SigninFragment : BaseFragment() {
         if (password.isEmpty()) {
             formValid = false
             binding.signinPasswordLayout.error = "Password must not empty"
+        } else if (password.length > 64) {
+            formValid = false
+            binding.signinPasswordLayout.error = "Password must not exceed 64 characters"
         } else if (!isPasswordValid(password)) {
             formValid = false
             binding.signinPasswordLayout.error = "Password is not valid"
@@ -140,7 +146,8 @@ class SigninFragment : BaseFragment() {
     private fun isEmailValid(email: String): Boolean = Patterns.EMAIL_ADDRESS.matcher(email).matches()
 
     private fun isPasswordValid(password: String): Boolean {
-        val passwordPattern = Pattern.compile("[a-zA-Z0-9!@#$]{8,32}")
+        logd(Constant.REGEX_STRONG_PASSWORD)
+        val passwordPattern = Pattern.compile(Constant.REGEX_STRONG_PASSWORD)
         return passwordPattern.matcher(password).matches()
     }
 
