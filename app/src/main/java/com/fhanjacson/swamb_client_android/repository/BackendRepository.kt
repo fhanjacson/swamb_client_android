@@ -9,7 +9,6 @@ import com.google.gson.Gson
 class BackendRepository {
 
     private val baseURL = "https://swamb-backend.herokuapp.com"
-//    private val baseURL = "https://211478a4719e.ngrok.io"
 
     fun registerUser(registerUserRequest: RegisterUserRequest): Request {
         return Fuel.post("$baseURL/users").jsonBody(Gson().toJson(registerUserRequest))
@@ -66,5 +65,4 @@ class BackendRepository {
     fun getUserStats(userID: String): Request {
         return Fuel.get("$baseURL/users/userStats?userID=$userID")
     }
-
 }

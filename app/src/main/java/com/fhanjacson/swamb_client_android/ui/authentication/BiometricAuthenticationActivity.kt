@@ -198,26 +198,20 @@ class BiometricAuthenticationActivity : BaseActivity() {
             sign()
         }!!
         val signedString = encodeToString(signatureResult, Base64.DEFAULT)
-        logd("signed:\n$signedString")
-
-
         try {
             val linkageID = authData.linkageID.toInt()
             val authLogID = authData.authLogID.toInt()
             val validateAuthenticationRequest = ValidateAuthenticationRequest(signedString, linkageID, authLogID)
-
             bRepo.validateAuthentication(validateAuthenticationRequest)
                 .responseObject(BackendResponse.Deserializer()) { req, res, validateAuthenticationResult ->
                     validateAuthenticationResult.fold(success = { data ->
                         logd(data.message)
                         if (data.success) {
                             toast("Authentication Success")
-                            logd("Authentication Success")
                             finish()
                         }
                     }, failure = { error ->
                         toast("Authentication Fail")
-                        loge("Authentication Fail")
                         loge(error.toString())
                         finish()
                     })

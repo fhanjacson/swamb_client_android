@@ -14,21 +14,21 @@ import com.fhanjacson.swamb_client_android.model.LinkageData
 import java.util.*
 import kotlin.collections.ArrayList
 
-class LinkageAdapter(private val linkageList: ArrayList<LinkageData>, private val fragment: Fragment, private val callback: LinkageClickListener): RecyclerView.Adapter<LinkageAdapter.LinkageViewHolder>() {
+class LinkageAdapter(private val linkageList: ArrayList<LinkageData>, private val fragment: Fragment, private val callback: LinkageClickListener): RecyclerView.Adapter<LinkageAdapter.LinkageViewHolderV2>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LinkageViewHolder {
-        val linkageViewHolder = LayoutInflater.from(parent.context).inflate(R.layout.item_linkage, parent, false)
-        return LinkageViewHolder(linkageViewHolder)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LinkageViewHolderV2 {
+        val linkageViewHolder = LayoutInflater.from(parent.context).inflate(R.layout.item_linkage_v2, parent, false)
+        return LinkageViewHolderV2(linkageViewHolder)
     }
 
     override fun getItemCount(): Int {
         return linkageList.size
     }
 
-    override fun onBindViewHolder(holder: LinkageViewHolder, position: Int) {
-        val linkageData = linkageList[position]
-        holder.bind(linkageData, fragment, callback)
-    }
+//    override fun onBindViewHolder(holder: LinkageViewHolder, position: Int) {
+//        val linkageData = linkageList[position]
+//        holder.bind(linkageData, fragment, callback)
+//    }
 
     class LinkageViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
 
@@ -56,8 +56,34 @@ class LinkageAdapter(private val linkageList: ArrayList<LinkageData>, private va
         }
     }
 
+    class LinkageViewHolderV2(itemView: View): RecyclerView.ViewHolder(itemView) {
+        private var linkageNicknameTextView: TextView = itemView.findViewById(R.id.linkageNickname_text)
+        private var vendorImageView: ImageView = itemView.findViewById(R.id.vendorIcon_image)
+        private var vendorNameTextview: TextView = itemView.findViewById(R.id.vendorName_text)
+        private var vendorUserIDTextview: TextView = itemView.findViewById(R.id.vendorUserID_text)
+
+        fun bind(linkageData: LinkageData, fragment: Fragment, callback: LinkageClickListener) {
+            if (linkageData.linkageNickname.isEmpty()) {
+                linkageNicknameTextView.visibility = View.GONE
+            } else {
+                linkageNicknameTextView.text = linkageData.linkageNickname
+            }
+            vendorNameTextview.text = linkageData.vendorName
+            vendorUserIDTextview.text = linkageData.vendorUserID
+            Glide.with(fragment).load(linkageData.vendorIconUrl).centerCrop().into(vendorImageView)
+            itemView.setOnClickListener {
+                callback.onItemViewClick(linkageData)
+            }
+        }
+    }
+
     interface LinkageClickListener {
         fun onItemViewClick(linkage: LinkageData)
+    }
+
+    override fun onBindViewHolder(holder: LinkageViewHolderV2, position: Int) {
+        val linkageData = linkageList[position]
+        holder.bind(linkageData, fragment, callback)
     }
 
 }

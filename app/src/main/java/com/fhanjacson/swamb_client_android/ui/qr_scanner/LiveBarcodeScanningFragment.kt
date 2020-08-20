@@ -140,8 +140,6 @@ class LiveBarcodeScanningFragment : BaseFragment() {
     private fun bindCameraUseCase() {
         val metrics = DisplayMetrics().also { binding.viewFinder.display.getRealMetrics(it) }
         logd("Screen metrics: ${metrics.widthPixels} x ${metrics.heightPixels}")
-//        val screenAspectRatio = aspectRatio(metrics.widthPixels, metrics.heightPixels)
-//        logd("Preview aspect ratio: $screenAspectRatio")
         val rotation = binding.viewFinder.display.rotation
         val cameraProvider = cameraProvider ?: throw IllegalStateException("Camera initialization failed.")
         val cameraSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
@@ -178,7 +176,7 @@ class LiveBarcodeScanningFragment : BaseFragment() {
             )
             preview.setSurfaceProvider(binding.viewFinder.createSurfaceProvider())
         } catch (exc: Exception) {
-            Constant.loge("Use case binding failed \n $exc")
+            loge("Use case binding failed \n $exc")
         }
     }
 
